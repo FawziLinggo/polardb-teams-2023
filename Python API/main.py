@@ -83,9 +83,10 @@ class TradingStatus(BaseModel):
     user: str
     emiten: str
     status: str
+    amount: float
 
 
 
 @app.post("/trading-status/")
 async def create_item(item: TradingStatus):
-    return {"user": item.user, "emiten": item.emiten, "status": item.status}
+    return {"user": item.user, "emiten": item.emiten, "status": item.status, "amount": item.amount}
