@@ -1,1 +1,0 @@
-<script>$('select.dropdown').dropdown() ;</script>

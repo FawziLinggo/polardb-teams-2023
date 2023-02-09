@@ -1,3 +1,13 @@
+# How to Run this Code?
+## 1. Python API
+- Pastika persyartan library nya sudah terinstall lebih baik jika menggunakan virtual environtment   
+- jika di jalankan melalui root folder maka jalankan perintah berikut :   
+```bash
+   cd cd Python\ API
+   uvicorn main:app --host 0.0.0.0 --port 4367
+```
+- port dapat disesuaikan dengan kebutuhan
+
 Fitur - Fitur :
 1.  Login / logout Register, untuk saat ini backendnya belum ada
 
