@@ -81,7 +81,7 @@ async def stock_chart():
 
 class TradingStatus(BaseModel):
     user: str
-    emiten: List[str]
+    emiten: str
     status: str
 
 
