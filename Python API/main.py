@@ -1,5 +1,5 @@
 import psycopg2
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
 from pydantic import BaseModel
@@ -29,6 +29,16 @@ conn = psycopg2.connect(
 )
 
 
+@app.exception_handler(404)
+async def not_found_exception_handler(request: Request, exc: HTTPException):
+    return tempaltes.TemplateResponse("404.html", {"request": request})
+
+
+@app.exception_handler(500)
+async def server_error_exception_handler(request: Request, exc: HTTPException):
+    return tempaltes.TemplateResponse("500.html", {"request": request})
+
+
 @app.get("/")
 def index(request: Request):
     stock_filter = request.query_params.get("filter", "")
@@ -46,7 +56,7 @@ def index(request: Request):
         rows = cur.fetchall()
         rows = [dict(symbol=row[0], company=row[1], volume=row[2]) for row in rows]
     # print(rows)
-
+    cur.close()
     return tempaltes.TemplateResponse("index.html", {"request": request, "stocks": rows})
 
 
@@ -63,6 +73,7 @@ def stocl_detail(request: Request, symbol):
     prices = cur.fetchall()
     prices = [dict(date=price[0], open=price[1], high=price[2], low=price[3], close=price[4], adj_close=price[5],
                    volume=price[6]) for price in prices]
+    cur.close()
     return tempaltes.TemplateResponse("stock_detail.html", {"request": request, "stock": row, "bars": prices})
 
 
@@ -86,7 +97,29 @@ class TradingStatus(BaseModel):
     amount: float
 
 
-
 @app.post("/trading-status/")
 async def create_item(item: TradingStatus):
     return {"user": item.user, "emiten": item.emiten, "status": item.status, "amount": item.amount}
+
+
+class Users(BaseModel):
+    email: str
+    password: str
+    username: str
+
+
+@app.post("/register/")
+async def register(item: Users):
+    # insert to database
+    try:
+        cur = conn.cursor()
+        query = """INSERT INTO public.user (email, password, username) VALUES ('{}', '{}', '{}')""".format(item.email,
+                                                                                                           item.password,
+                                                                                                           item.username)
+        print(query)
+        cur.execute(query)
+        conn.commit()
+        cur.close()
+        return {"email": item.email, "password": item.password, "username": item.username}
+    except Exception as e:
+        return {"error": str(e),"status code": 400}
