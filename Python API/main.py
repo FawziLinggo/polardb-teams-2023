@@ -113,9 +113,10 @@ async def register(item: Users):
     # insert to database
     cur = conn.cursor()
     try:
-        query = """INSERT INTO public.user (email, password, username) VALUES ('{}', '{}', '{}')""".format(item.email,
-                                                                                                           item.password,
-                                                                                                           item.username)
+        query = """INSERT INTO public.user (email, password, username) VALUES ('{}', '{}', '{}')"""\
+            .format(item.email,
+                    item.password,
+                    item.username)
         print(query)
         cur.execute(query)
         conn.commit()
@@ -125,3 +126,8 @@ async def register(item: Users):
         cur.execute("ROLLBACK")
         cur.close()
         return {"error": str(e),"status code": 400}
+
+
+@app.get("/subscribe/{symbol}")
+def subscribe(request: Request, symbol):
+    return tempaltes.TemplateResponse("subscribe_stock.html", {"request": request, "symbol": symbol})
