@@ -111,8 +111,8 @@ class Users(BaseModel):
 @app.post("/register/")
 async def register(item: Users):
     # insert to database
+    cur = conn.cursor()
     try:
-        cur = conn.cursor()
         query = """INSERT INTO public.user (email, password, username) VALUES ('{}', '{}', '{}')""".format(item.email,
                                                                                                            item.password,
                                                                                                            item.username)
@@ -122,4 +122,6 @@ async def register(item: Users):
         cur.close()
         return {"email": item.email, "password": item.password, "username": item.username}
     except Exception as e:
+        cur.execute("ROLLBACK")
+        cur.close()
         return {"error": str(e),"status code": 400}
