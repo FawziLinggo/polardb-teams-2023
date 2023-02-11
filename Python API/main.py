@@ -103,6 +103,7 @@ async def create_item(item: TradingStatus):
 
 
 class Users(BaseModel):
+    id: str
     email: str
     password: str
     username: str
@@ -113,15 +114,16 @@ async def register(item: Users):
     # insert to database
     cur = conn.cursor()
     try:
-        query = """INSERT INTO public.user (email, password, username) VALUES ('{}', '{}', '{}')"""\
-            .format(item.email,
+        query = """INSERT INTO public.user (id, email, password, username) VALUES ('{}','{}', '{}', '{}')"""\
+            .format(item.id,
+                    item.email,
                     item.password,
                     item.username)
         print(query)
         cur.execute(query)
         conn.commit()
         cur.close()
-        return {"email": item.email, "password": item.password, "username": item.username}
+        return {"id":item.id, "email": item.email, "password": item.password, "username": item.username}
     except Exception as e:
         cur.execute("ROLLBACK")
         cur.close()
