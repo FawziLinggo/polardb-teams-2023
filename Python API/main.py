@@ -3,11 +3,25 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+
+import os
 from typing import List
 
 # change port to 8080
 app = FastAPI()
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static",StaticFiles(directory=static_dir),name="static")
 tempaltes = Jinja2Templates(directory="templates")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Read config file
 configs = Properties()
@@ -109,7 +123,7 @@ class Users(BaseModel):
     username: str
 
 
-@app.post("/register/")
+@app.post("/register")
 async def register(item: Users):
     # insert to database
     cur = conn.cursor()
@@ -133,3 +147,11 @@ async def register(item: Users):
 @app.get("/subscribe/{symbol}")
 def subscribe(request: Request, symbol):
     return tempaltes.TemplateResponse("subscribe_stock.html", {"request": request, "symbol": symbol})
+
+@app.get("/login")
+def login(request: Request):
+    return tempaltes.TemplateResponse("login.html", {"request": request})
+
+@app.get("/signup")
+def login(request: Request):
+    return tempaltes.TemplateResponse("signup.html", {"request": request})
