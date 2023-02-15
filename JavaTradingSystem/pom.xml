@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fawzi.teams.polardb.com</groupId>
-    <artifactId>JavaTradingSystem</artifactId>
+    <artifactId>StockServer</artifactId>
     <version>1.0-SNAPSHOT</version>
     <repositories>
         <repository>
@@ -25,6 +25,49 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorId>jar-with-dependencies</descriptorId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>fawzi.teams.polardb.com.socket.StockServer</mainClass>
+                                </manifest>
+                            </archive>
+                            <finalName>StockServer</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>fawzi.teams.polardb.com.socket.StockClientNoSSL</mainClass>
+                                </manifest>
+                            </archive>
+                            <finalName>StockServer</finalName>
+                        </configuration>
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
