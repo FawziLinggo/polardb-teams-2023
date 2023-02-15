@@ -1,18 +1,31 @@
+import asyncio
+import json
+import logging
+
 import psycopg2
+from aiokafka import AIOKafkaConsumer
+from confluent_kafka import Consumer, KafkaError
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictStr
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
 import os
-from typing import List
+from pykafka import KafkaClient
+from starlette.endpoints import WebSocketEndpoint
+from starlette.responses import StreamingResponse
+from starlette.websockets import WebSocket
+import typing
+
+def get_kafka_client():
+    return KafkaClient(hosts='172.18.46.121:9092')
+
 
 # change port to 8080
-app = FastAPI()
+app = FastAPI(title="test")
 static_dir = os.path.join(os.path.dirname(__file__), "static")
-app.mount("/static",StaticFiles(directory=static_dir),name="static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 tempaltes = Jinja2Templates(directory="templates")
 
 app.add_middleware(
@@ -42,7 +55,8 @@ conn = psycopg2.connect(
     password=pass_db
 )
 
-
+loop = asyncio.get_event_loop()
+logger = logging.getLogger(__name__)
 @app.exception_handler(404)
 async def not_found_exception_handler(request: Request, exc: HTTPException):
     return tempaltes.TemplateResponse("404.html", {"request": request})
@@ -91,17 +105,7 @@ def stocl_detail(request: Request, symbol):
     return tempaltes.TemplateResponse("stock_detail.html", {"request": request, "stock": row, "bars": prices})
 
 
-@app.get("/stock/TRST/chart")
-async def stock_chart():
-    data = [
-        [1612489600000, 10.0],
-        [1612576000000, 11.0],
-        [1612662400000, 12.0],
-        [1612748800000, 13.0],
-        [1612835200000, 14.0],
-        [1612921600000, 15.0]
-    ]
-    return data
+
 
 
 class TradingStatus(BaseModel):
@@ -128,7 +132,7 @@ async def register(item: Users):
     # insert to database
     cur = conn.cursor()
     try:
-        query = """INSERT INTO public.user (id, email, password, username) VALUES ('{}','{}', '{}', '{}')"""\
+        query = """INSERT INTO public.user (id, email, password, username) VALUES ('{}','{}', '{}', '{}')""" \
             .format(item.id,
                     item.email,
                     item.password,
@@ -137,21 +141,46 @@ async def register(item: Users):
         cur.execute(query)
         conn.commit()
         cur.close()
-        return {"id":item.id, "email": item.email, "password": item.password, "username": item.username}
+        return {"id": item.id, "email": item.email, "password": item.password, "username": item.username}
     except Exception as e:
         cur.execute("ROLLBACK")
         cur.close()
-        return {"error": str(e),"status code": 400}
+        return {"error": str(e), "status code": 400}
 
 
 @app.get("/subscribe/{symbol}")
 def subscribe(request: Request, symbol):
     return tempaltes.TemplateResponse("subscribe_stock.html", {"request": request, "symbol": symbol})
 
+
 @app.get("/login")
 def login(request: Request):
     return tempaltes.TemplateResponse("login.html", {"request": request})
 
+
 @app.get("/signup")
 def login(request: Request):
     return tempaltes.TemplateResponse("signup.html", {"request": request})
+
+@app.get("/faq")
+def login(request: Request):
+    return tempaltes.TemplateResponse("faq.html", {"request": request})
+
+
+@app.get("/leaderboard")
+def login(request: Request):
+    tabel = "investors_net_balance"
+    schema = "public"
+    name = "fawzilinggo"
+    cur = conn.cursor()
+    query = """SELECT username, balance FROM {}.{} WHERE username = '{}'""".format(schema, tabel, name)
+    cur.execute(query)
+    row = cur.fetchone()
+    print(row)
+    balance = row[1]
+    name = row[0]
+    cur.close()
+    return tempaltes.TemplateResponse("leaderboard.html",
+                                      {"request": request,
+                                       "balance": balance,
+                                       "name": name})
