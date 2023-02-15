@@ -9,7 +9,7 @@ from jproperties import Properties
 # Logging
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 app = Flask(__name__)
 email_sender = 'fawzi@mhs.unsyiah.ac.id'
@@ -125,6 +125,64 @@ def send_email_subscriber():
     except Exception as e:
         logging.error(str(e))
         return json.dumps({"error": str(e), "status": "error"})
+
+def update_balance_investor(username, balance):
+    tabel = "investors_net_balance"
+    schema = "public"
+    try:
+        cur = conn.cursor()
+        query = """UPDATE {}.{} SET balance = '{}' WHERE username = '{}'""".format(schema, tabel, balance, username)
+        cur.execute(query)
+        cur.close()
+        conn.commit()
+        logging.info("Success update balance investor to database with name {}".format(username))
+        return "Success update balance investor to database with name {}".format(username)
+    except Exception as e:
+        logging.error("failed update balance investor to database with name {}".format(username))
+        return str(e)
+@app.route("/investors-net-balance", methods=['POST'])
+def investors_net_balance():
+    tabel = "investors_net_balance"
+    schema = "public"
+    data = request.get_json()
+    id_ = data['id']
+
+    # check status buy or sell
+    if data['status_trade'] == "buy":
+        balance = data['amount']
+    else:
+        balance = -data['amount']
+
+    email_investor = get_email_receiver(id_)
+    username = email_investor.split("@")[0]
+    try:
+        # Select one investor
+        cur = conn.cursor()
+        query = """SELECT * FROM {}.{} WHERE username = '{}'""".format(schema, tabel, username)
+        cur.execute(query)
+        data_investor = cur.fetchone()
+        if data_investor is None:
+            query = """INSERT INTO {}.{} (username, email, balance) VALUES ('{}', '{}', 0)"""\
+                .format(schema, tabel, username, email_investor)
+            cur.execute(query)
+            conn.commit()
+            cur.close()
+            logging.info("Success insert investor to database with name {}".format(username))
+            update_balance_investor(username, balance)
+            logging.info("Success update balance investor to database with name {}".format(username))
+            return "Success insert investor to database with name {}".format(username)
+        else:
+            # Update balance investor
+            # data : [username, email, balance]
+            balance = data_investor[2] + balance
+            update_balance_investor(username, balance)
+            logging.info("Success update balance investor to database with name {}".format(username))
+            return "Success update balance investor to database with name {}".format(username)
+
+    except Exception as e:
+        logging.error(str(e))
+        return json.dumps({"error": str(e), "status": "error"})
+
 
 if __name__ == '__main__':
     logging.info("Starting Email Service at port 5000")
