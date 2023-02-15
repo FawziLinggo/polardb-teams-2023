@@ -1,18 +1,11 @@
 import asyncio
 import signal
-import threading
 from asyncio import get_event_loop, Future
-from configparser import ConfigParser
 from functools import partial
 
 import websockets
-from confluent_kafka import Consumer, KafkaError
+from confluent_kafka import Consumer
 
-# Create Consumer instance
-# fileConfig = open('/home/adi/fawzi_linggo/pythonProject/pythonProject/polardb-teams-2023/All-Config/KafkaConsumer.ini', 'r')
-# config_parser = ConfigParser()
-# config_parser.read_file(fileConfig)
-# config = dict(config_parser['kafka'])
 c = Consumer({
     'bootstrap.servers': '172.18.46.121:9092',
     'group.id': 'mygroup',
@@ -27,7 +20,7 @@ c = Consumer({
 
 # Subscribe to topic
 def run_consumer(clients):
-    c.subscribe(['TradingSystemOrder'])
+    c.subscribe(['TradingSystemOrder3'])
     while True:
         msg = c.poll(1.0)
         if msg is None:
