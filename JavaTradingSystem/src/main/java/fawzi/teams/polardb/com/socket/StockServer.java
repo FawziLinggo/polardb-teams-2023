@@ -42,7 +42,8 @@ public class StockServer {
                         (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
                         (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
                         Timestamp.from(Instant.now()).getTime());
-                if (tradingJson.Close < tradingJson.High){
+                try {
+                    if (tradingJson.Close < tradingJson.High){
                     bufferedWriter.write(String.valueOf(tradingJson));
                     logger.info(tradingJson);
                     bufferedWriter.newLine();
@@ -53,6 +54,10 @@ public class StockServer {
                     logger.info("Client Disconnect");
                     break;
                 }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
         } catch (IOException e) {
