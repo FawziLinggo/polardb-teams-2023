@@ -1,10 +1,7 @@
 import asyncio
-import json
 import logging
 
 import psycopg2
-from aiokafka import AIOKafkaConsumer
-from confluent_kafka import Consumer, KafkaError
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
@@ -13,10 +10,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from pykafka import KafkaClient
-from starlette.endpoints import WebSocketEndpoint
-from starlette.responses import StreamingResponse
-from starlette.websockets import WebSocket
-import typing
 
 def get_kafka_client():
     return KafkaClient(hosts='172.18.46.121:9092')
