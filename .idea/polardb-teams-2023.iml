@@ -11,5 +11,6 @@
     <orderEntry type="library" name="highcharts" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="lightweight-charts" level="application" />
   </component>
 </module>

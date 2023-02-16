@@ -8,7 +8,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -26,13 +28,17 @@ public class Main {
 
     KafkaProducer<String,String> producer = new KafkaProducer<String, String>(props);
             for (int i = 0; i < 1000; i++){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
                 String Symbol = (String) data.getJSONArray("Perusahaan").get((int) (Math.random()*((data.getJSONArray("Perusahaan").length()-1)+1)+0));
-                TradingJson tradingJson = new TradingJson(Symbol ,(float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                Timestamp.from(Instant.now()).getTime());
-                if (tradingJson.Close < tradingJson.High){
+                float Open = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float High = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float Low = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float Close = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                String Time = sdf.format(new Date(System.currentTimeMillis()));
+
+                TradingJson tradingJson = new TradingJson(Symbol, Open, High, Low, Close, Time);
+                if (tradingJson.close < tradingJson.high){
                     System.out.println(tradingJson);
                     // producer callback to kafka topic
                     ProducerRecord<String, String> record = new ProducerRecord<>("TradingSystemOrder", tradingJson.toString());

@@ -44,6 +44,7 @@ public class StockClientNoSSL {
             // produce to topic kafka
             while (true){
                 String str = bf.readLine();
+//                System.out.println(str);
                 // producer to kafka topic
                 producer.send(new ProducerRecord<>(topics, str));
                 producer.flush();

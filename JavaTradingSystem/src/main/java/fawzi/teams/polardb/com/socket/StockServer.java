@@ -8,7 +8,10 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Properties;
 public class StockServer {
@@ -28,7 +31,9 @@ public class StockServer {
 
             ServerSocket ss = new ServerSocket(port);
             System.out.println("Server started on port " + port);
-
+            
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(2);
 
         while (true){
             Socket s = ss.accept();
@@ -36,14 +41,24 @@ public class StockServer {
             PrintWriter pr = new PrintWriter(s.getOutputStream());
             BufferedWriter bufferedWriter = new BufferedWriter(pr);
             while (true){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+                String time = sdf.format(new Date(System.currentTimeMillis()));
+
                 String Symbol = (String) data.getJSONArray("Perusahaan").get((int) (Math.random()*((data.getJSONArray("Perusahaan").length()-1)+1)+0));
-                TradingJson tradingJson = new TradingJson(Symbol ,(float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                        (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                        (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                        (float) (Math.random()*(max_harga-min_harga+1)+min_harga),
-                        Timestamp.from(Instant.now()).getTime());
+                float Open = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float High = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float Low = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                float Close = (float) (Math.random()*(max_harga-min_harga+1)+min_harga);
+                String Time = sdf.format(new Date(System.currentTimeMillis()));
+                Open = Float.parseFloat(df.format(Open));
+                High = Float.parseFloat(df.format(High));
+                Low = Float.parseFloat(df.format(Low));
+                Close = Float.parseFloat(df.format(Close));
+
+
+                TradingJson tradingJson = new TradingJson(Symbol, Open, High, Low, Close, time);
                 try {
-                    if (tradingJson.Close < tradingJson.High){
+                    if (tradingJson.close < tradingJson.high){
                     bufferedWriter.write(String.valueOf(tradingJson));
                     logger.info(tradingJson);
                     bufferedWriter.newLine();
