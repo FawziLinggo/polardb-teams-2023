@@ -4,9 +4,9 @@ FROM python:3.10
 # Author
 LABEL author="StcoksWizard"
 # Update
-RUN apt-get update -y
-# Install
-RUN apt-get install -y python-pip python-dev build-essential
+RUN apt-get update -y && apt-get install -y librdkafka-dev
+# Install pip
+RUN apt-get install -y python3-pip
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 RUN pip install --upgrade wheel
@@ -21,8 +21,6 @@ COPY . /app
 # Working directory
 WORKDIR /app
 
-# Install
-RUN pip install -r requirements.txt
 # Expose
 EXPOSE 8765
 # Run
