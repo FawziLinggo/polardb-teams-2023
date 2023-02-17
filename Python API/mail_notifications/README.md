@@ -9,3 +9,27 @@
 ## API (Port 5000)
 1. /send-email-order - GET -data {id, stock, amount, status_trade}
 2. /send-email-subscriber - GET
+
+
+## How to run this program
+1. build image 
+```bash
+docker build -t stockswizard-polardb/mail-notifications:latest .
+```
+2. run container    
+```bash
+docker run -d -p 5000:5000 --name stockswizard-polardb-mail-notifications stockswizard-polardb/mail-notifications:latest -e EMAIL_SENDER="" -e EMAIL_PASSWORD="" -e URL_DB="" -e NAME_DB="" -e USER_DB="" -e PASS_DB="" -e PORT_DB=""
+```
+
+3. check container
+```bash
+docker ps
+```
+4. check logs
+```bash
+docker logs stockswizard-polardb-mail-notifications
+```
+5. stop container
+```bash
+docker stop stockswizard-polardb-mail-notifications
+```

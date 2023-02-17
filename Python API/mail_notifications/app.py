@@ -1,34 +1,57 @@
 import json
+import os
+import socket
+import sys
 from datetime import datetime, timedelta
 
 import psycopg2 as psycopg2
 from flask import Flask, request
 from flask_mail import Mail, Message
-from jproperties import Properties
 
 # Logging
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-
 app = Flask(__name__)
-email_sender = 'fawzi@mhs.unsyiah.ac.id'
+
+
+# Email config
+email_sender = os.environ.get('EMAIL_SENDER')
+if email_sender is None:
+    sys.exit("EMAIL_SENDER environment variable is not set")
+    
+email_password = os.environ.get('EMAIL_PASSWORD')
+if email_password is None:
+    sys.exit("EMAIL_PASSWORD environment variable is not set")
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = email_sender
-app.config['MAIL_PASSWORD'] = 'aGF5b2FwYWhheW8=%'
+app.config['MAIL_PASSWORD'] = email_password
 
-# Read config file
-configs = Properties()
-with open('../../All-Config/config.properties', 'rb') as config_file:
-    configs.load(config_file)
-url_db = configs.get("url_db").data
-name_db = configs.get("name_db").data
-user_db = configs.get("user_db").data
-pass_db = configs.get("pass_db").data
-port_db = configs.get("port_db").data
+
+# Get environment for database
+url_db = os.environ.get('URL_DB')
+if url_db is None:
+    sys.exit("URL_DB environment variable is not set")
+
+name_db = os.environ.get('NAME_DB')
+if name_db is None:
+    sys.exit("NAME_DB environment variable is not set")
+
+user_db = os.environ.get('USER_DB')
+if user_db is None:
+    sys.exit("USER_DB environment variable is not set")
+
+pass_db = os.environ.get('PASS_DB')
+if pass_db is None:
+    sys.exit("PASS_DB environment variable is not set")
+
+port_db = os.environ.get('PORT_DB')
+if port_db is None:
+    sys.exit("PORT_DB environment variable is not set")
 
 # Connect to postgres database
 conn = psycopg2.connect(
@@ -94,8 +117,7 @@ def send_email_subscriber():
     try:
         data = request.get_json()
         id_ = data['id']
-        # email_receiver = get_email_receiver(id_)
-        email_receiver = "70k0b0d0@gmail.com"
+        email_receiver = get_email_receiver(id_)
         logging.info("process send email subscriber to {}".format(email_receiver))
 
         stock = data['stock']
@@ -185,5 +207,8 @@ def investors_net_balance():
 
 
 if __name__ == '__main__':
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print(IPAddr)
     logging.info("Starting Email Service at port 5000")
-    app.run(debug=True, port=5000)
+    app.run(port=5000, host=IPAddr)

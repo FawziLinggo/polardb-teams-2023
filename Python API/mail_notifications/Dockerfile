@@ -6,11 +6,10 @@ LABEL author="StcoksWizard"
 # Update
 RUN apt-get update -y
 # Install
-RUN apt-get install -y python-pip python-dev build-essential
+RUN apt-get install -y python3-pip python3-dev build-essential
 
 # Copy
 COPY . /app
-COPY ../../All-Config/config.properties /app/config.properties
 RUN ls -la /app
 
 
@@ -20,7 +19,7 @@ WORKDIR /app
 # Install
 RUN pip install -r requirements.txt
 # Expose
-EXPOSE 5000/http
+EXPOSE 5000
 # Run
 CMD ["python", "app.py"]
 
