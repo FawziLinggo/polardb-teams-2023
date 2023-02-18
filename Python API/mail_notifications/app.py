@@ -1,18 +1,32 @@
 import json
 import os
-import socket
 import sys
 from datetime import datetime, timedelta
 
 import psycopg2 as psycopg2
+import requests as requests
 from flask import Flask, request
 from flask_mail import Mail, Message
+from flask_httpauth import HTTPBasicAuth
 
 # Logging
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 app = Flask(__name__)
+
+# basic auth flask app
+auth = HTTPBasicAuth()
+user_auth = os.environ.get('USER_AUTH')
+if user_auth is None:
+    sys.exit("USER_AUTH environment variable is not set")
+pass_auth = os.environ.get('PASS_AUTH')
+if pass_auth is None:
+    sys.exit("PASS_AUTH environment variable is not set")
+
+users = {
+    user_auth: pass_auth
+}
 
 
 # Email config
@@ -63,6 +77,12 @@ conn = psycopg2.connect(
 )
 mail = Mail(app)
 
+# auth handler
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and password == users[username]:
+        return username
+
 def get_email_receiver(id_):
     cur = conn.cursor()
     cur.execute("""SELECT email FROM public."user" where id = '{}'""".format(id_))
@@ -84,6 +104,7 @@ def insert_token_subscriber(name, username_token, token, expire30days, topic, sy
         logging.error("failed insert token kafka subscriber to database with name {} symbol {}".format(name, symbol))
         return str(e)
 @app.route("/send-email-order", methods=['GET'])
+@auth.login_required
 def send_email():
     try:
         data = request.get_json()
@@ -113,6 +134,7 @@ def send_email():
         return json.dumps({"error": str(e), "status": "error"})
 
 @app.route("/send-email-subscriber", methods=['GET'])
+@auth.login_required
 def send_email_subscriber():
     try:
         data = request.get_json()
@@ -163,6 +185,7 @@ def update_balance_investor(username, balance):
         logging.error("failed update balance investor to database with name {}".format(username))
         return str(e)
 @app.route("/investors-net-balance", methods=['POST'])
+@auth.login_required
 def investors_net_balance():
     tabel = "investors_net_balance"
     schema = "public"
@@ -206,9 +229,19 @@ def investors_net_balance():
         return json.dumps({"error": str(e), "status": "error"})
 
 
+def get_ippublic():
+    endpoint = 'https://ipinfo.io/json'
+    response = requests.get(endpoint, verify = True)
+
+    if response.status_code != 200:
+        return 'Status:', response.status_code, 'Problem with the request. Exiting.'
+        exit()
+
+    data = response.json()
+
+    return data['ip']
+
 if __name__ == '__main__':
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)
-    print(IPAddr)
+    IPAddr = get_ippublic()
     logging.info("Starting Email Service at port 5000")
-    app.run(port=5000, host=IPAddr)
+    app.run(port=80, host=IPAddr)
