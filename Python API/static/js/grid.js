@@ -1,4 +1,4 @@
-const url_websocket = "ws://127.0.0.1:8765";
+const url_websocket = "ws://172.18.46.121:8765";
 const ws = new WebSocket(url_websocket);
 console.log(ws);
 
