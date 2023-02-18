@@ -18,7 +18,7 @@ docker build -t stockswizard-polardb/mail-notifications:latest .
 ```
 2. run container    
 ```bash
-docker run -d -p 5000:5000 --name stockswizard-polardb-mail-notifications stockswizard-polardb/mail-notifications:latest -e EMAIL_SENDER="" -e EMAIL_PASSWORD="" -e URL_DB="" -e NAME_DB="" -e USER_DB="" -e PASS_DB="" -e PORT_DB=""
+docker run -d -p 5000:5000 --name stockswizard-polardb-mail-notifications  -e EMAIL_SENDER="" -e EMAIL_PASSWORD="" -e URL_DB="" -e NAME_DB="" -e USER_DB="" -e PASS_DB="" -e PORT_DB="" localhost/stockswizard-polardb/mail-notifications:latest
 ```
 
 3. check container
