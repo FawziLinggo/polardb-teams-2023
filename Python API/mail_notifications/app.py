@@ -8,12 +8,14 @@ import psycopg2 as psycopg2
 from flask import Flask, request
 from flask_mail import Mail, Message
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 
 # Logging
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # basic auth flask app
 auth = HTTPBasicAuth()
