@@ -13,7 +13,7 @@ onAuthStateChanged(auth, (user) => {
     if (window.location.pathname == "/signup") {
       // do nothing
     } else if (window.location.pathname != "/login") {
-      window.location.href = "/login";
+      window.location.href = "/login?#";
     }
   }
 });
