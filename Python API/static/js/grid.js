@@ -1,5 +1,5 @@
-const url_websocket = "ws://172.18.46.121:8765";
-const ws = new WebSocket(url_websocket);
+const url_websockets = "ws://172.18.46.121:8765";
+const ws = new WebSocket(url_websockets);
 console.log(ws);
 
 // get last url from this page
@@ -59,30 +59,31 @@ const trade = document.getElementById("trade");
 ws.onmessage = function (event) {
     messages = JSON.parse(event.data);
     // console.log(messages);
-
-        const tradeElement = document.createElement("div");
-        tradeElement.className = "trade";
-        tradeElement.innerHTML = `<b>${messages.symbol}</b> 
+        if (messages.symbol == symbol) {
+            const tradeElement = document.createElement("div");
+            tradeElement.className = "trade";
+            tradeElement.innerHTML = `<b>${messages.symbol}</b> 
         ${messages.close} ${messages.high} ${messages.low} 
         ${messages.open} ${messages.time}`;
-        trade.appendChild(tradeElement);
+            trade.appendChild(tradeElement);
 
-        // var bar = messages[Key];
-        var timestamp  = new Date(messages.time).getTime() / 1000;
+            // var bar = messages[Key];
+            var timestamp = new Date(messages.time).getTime() / 1000;
 
 
-        currentBar = {
-            time: timestamp,
-            open: messages.open,
-            high: messages.high,
-            low: messages.low,
-            close: messages.close,
-        };
+            currentBar = {
+                time: timestamp,
+                open: messages.open,
+                high: messages.high,
+                low: messages.low,
+                close: messages.close,
+            };
 
-        var element = document.getElementsByClassName("trade");
-        if (element.length > 19) {
-            trade.removeChild(element[0]);
+            var element = document.getElementsByClassName("trade");
+            if (element.length > 19) {
+                trade.removeChild(element[0]);
+            }
+
+            candleSeries.update(currentBar);
         }
-
-        candleSeries.update(currentBar);
 }

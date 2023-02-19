@@ -1,10 +1,10 @@
 import json
 import os
+import socket
 import sys
 from datetime import datetime, timedelta
 
 import psycopg2 as psycopg2
-import requests as requests
 from flask import Flask, request
 from flask_mail import Mail, Message
 from flask_httpauth import HTTPBasicAuth
@@ -154,7 +154,8 @@ def send_email_subscriber():
 
         try:
             HTMLFile = open("templates/notif-subcriber.html", "r")
-            HTMLFile = HTMLFile.read().format(name=name, stock=stock, topic_name=topic, username=username_token, token=token, expire30days=expire30days)
+            HTMLFile = HTMLFile.read().format(name=name, stock=stock, topic_name=topic, username=username_token,
+                                              token=token, expire30days=expire30days)
             msg = Message(Title, sender=email_sender, recipients=[email_receiver])
             msg.html = HTMLFile
             mail.send(msg)
@@ -229,19 +230,9 @@ def investors_net_balance():
         return json.dumps({"error": str(e), "status": "error"})
 
 
-def get_ippublic():
-    endpoint = 'https://ipinfo.io/json'
-    response = requests.get(endpoint, verify = True)
-
-    if response.status_code != 200:
-        return 'Status:', response.status_code, 'Problem with the request. Exiting.'
-        exit()
-
-    data = response.json()
-
-    return data['ip']
-
 if __name__ == '__main__':
-    IPAddr = get_ippublic()
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print(IPAddr)
     logging.info("Starting Email Service at port 5000")
     app.run(port=80, host=IPAddr)

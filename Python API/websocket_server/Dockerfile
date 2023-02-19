@@ -24,4 +24,4 @@ WORKDIR /app
 # Expose
 EXPOSE 8765
 # Run
-CMD ["python", "websocket_kafka.py"]
+CMD ["python3", "websocket_kafka.py"]

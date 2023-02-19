@@ -19,7 +19,7 @@ WORKDIR /app
 # Install
 RUN pip install -r requirements.txt
 # Expose
-EXPOSE 5000
+EXPOSE 80
 # Run
 CMD ["python", "app.py"]
 

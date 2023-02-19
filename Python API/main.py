@@ -5,7 +5,7 @@ import psycopg2
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
-from pydantic import BaseModel, StrictStr
+from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
