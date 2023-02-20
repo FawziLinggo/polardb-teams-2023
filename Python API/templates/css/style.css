@@ -10,7 +10,7 @@
   justify-content: center;
 }
 body {
-  background: currentColor;
+  background: #fff !important;
 }
 /* I. Containers */
 figure {

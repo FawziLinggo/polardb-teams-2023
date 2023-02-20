@@ -1,52 +1,82 @@
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{{ url_for('static', path='css/style.js') }}">
-<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"> $('select.dropdown')
-  .dropdown()
-;</script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script type="module" src="{{ url_for('static', path='js/init_firebase.js') }}"></script>
-    <script type="module" src="{{ url_for('static', path='js/logout.js') }}"></script>
-    <script type="module" src="{{ url_for('static', path='js/stream_auth.js') }}"></script>
+  {% block title %}
+    <title>Loading...</title>
+  {% endblock %}
 
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css"> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/main-style.css') }}">
+  <link rel="stylesheet" href="css/main-style.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css" />
+  <!-- <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"> $('select.dropdown')
+      .dropdown()
+      ;</script> -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="module" src="{{ url_for('static', path='js/init_firebase.js') }}"></script>
+  <script type="module" src="{{ url_for('static', path='js/logout.js') }}"></script>
+  <script type="module" src="{{ url_for('static', path='js/stream_auth.js') }}"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.js"></script>
 </head>
-</head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <i class="fa fa-money fa-2x" aria-hidden="true"></i>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-success bg-success">
+  <i class="fa fa-money fa-2x text-white" aria-hidden="true"></i>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
+  <div class="container p-0">
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-      </li>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+
         <li class="nav-item active">
-        <a class="nav-link" href="/faq">FAQ <span class="sr-only">(current)</span></a>
-      </li>
+          <a class="nav-link text-white" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
         <li class="nav-item active">
-        <a class="nav-link" href="/leaderboard">Leaderboard <span class="sr-only">(current)</span></a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <button class="btn btn-outline-danger my-2 my-sm-0" id="logout">Logout</button>
-    </form>
+          <a class="nav-link text-white" href="/faq">FAQ <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link text-white" href="/leaderboard">Leaderboard <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-danger my-2 my-sm-0" id="logout">Logout</button>
+      </form>
+    </div>
   </div>
 </nav>
-<div class="ui container">
 
     {% block content %}
     {% endblock %}
-</div>
+      <footer>
+      <div class="footer-logo">
+        <i class="fa fa-money fa-2x" aria-hidden="true"></i>
+      </div>
+      <nav class="footer-nav">
+        <ul>
+        <li class="nav-item active mx-0">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active mx-0">
+          <a class="nav-link" href="/faq">FAQ <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active mx-0">
+          <a class="nav-link" href="/leaderboard">Leaderboard <span class="sr-only">(current)</span></a>
+        </li>
+        </ul>
+      </nav>
+      <div class="footer-text">
+        <p class="m-0">Copyright © 2023 Hackathon PolarDB</p>
+      </div>
+      </footer>
 </body>
 </html>

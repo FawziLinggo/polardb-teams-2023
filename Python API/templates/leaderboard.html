@@ -1,8 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
-
-<title>Lederboard</title>
-
+{% block title %}
+    <title>Stock Wizard - Leaderboard</title>
+{% endblock %}
+<div class="container">
 <h1 class="ui red header">Leaderboard</h1>
 <h2 class="ui blue header"> Hello {{ name }} your balance is {{ balance }}</h2>
+</div>
 {% endblock %}
+
+{% block footer %}
+{% endblock %}
+

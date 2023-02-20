@@ -9,6 +9,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .footer-logo img {
@@ -39,4 +40,10 @@ footer {
 .footer-text {
   font-size: 14px;
   color: #333;
+}
+
+.brand {
+  font-size: 20px;
+  width: 200px;
+  color: #fff;
 }
