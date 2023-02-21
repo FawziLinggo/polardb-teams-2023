@@ -15,7 +15,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # basic auth flask app
 auth = HTTPBasicAuth()
@@ -105,7 +105,7 @@ def insert_token_subscriber(name, username_token, token, expire30days, topic, sy
     except Exception as e:
         logging.error("failed insert token kafka subscriber to database with name {} symbol {}".format(name, symbol))
         return str(e)
-@app.route("/send-email-order", methods=['GET'])
+@app.route("/send-email-order", methods=['POST'])
 @auth.login_required
 def send_email():
     try:
@@ -135,7 +135,7 @@ def send_email():
         logging.error(str(e))
         return json.dumps({"error": str(e), "status": "error"})
 
-@app.route("/send-email-subscriber", methods=['GET'])
+@app.route("/send-email-subscriber", methods=['POST'])
 @auth.login_required
 def send_email_subscriber():
     try:
