@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 import psycopg2
@@ -141,9 +142,6 @@ async def register(item: Users):
         return {"error": str(e), "status code": 400}
 
 
-@app.get("/subscribe/{symbol}")
-def subscribe(request: Request, symbol):
-    return tempaltes.TemplateResponse("subscribe_stock.html", {"request": request, "symbol": symbol})
 
 
 @app.get("/login")
@@ -177,3 +175,52 @@ def login(request: Request):
                                       {"request": request,
                                        "balance": balance,
                                        "name": name})
+@app.post("/send-leaderboard")
+async def send_leaderboard(request: Request):
+    schema = "public"
+    table = "trading_order_realtime"
+    request_body = await request.json()
+    print(request_body)
+
+
+class TradingOrderRealtome(BaseModel):
+    symbol: str
+    open: float
+    low: float
+    high: float
+    close: float
+    time: str
+@app.post("/trading-order-realtime")
+async def stock_realtime(request: Request):
+    schema = "public"
+    table = "trading_order_realtime"
+    request_body = await request.json()
+    symbol = request_body['symbol']
+    query = """
+    SELECT symbol, "open", low, high, "close", "time" FROM {}.{} WHERE symbol = '{}'
+    """.format(schema, table, symbol)
+
+    cur = conn.cursor()
+    cur.execute(query)
+    datas = cur.fetchall()
+    messages =[]
+    for data in datas:
+        symbol = data[0]
+        open = data[1]
+        low = data[2]
+        high = data[3]
+        close = data[4]
+        time = data[5]
+        json_data = {
+            "symbol": symbol,
+            "open": open,
+            "low": low,
+            "high": high,
+            "close": close,
+            "time": time
+        }
+        messages.append(json_data)
+
+    cur.close()
+    return messages
+

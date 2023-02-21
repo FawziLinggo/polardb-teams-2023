@@ -51,15 +51,52 @@ backgroundColor: '#000000',
 	},
 });
 
+
 var candleSeries = chart.addCandlestickSeries();
+
+
+let trades =[];
+fetch(local+'/trading-order-realtime', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+}).then(response => response.json()).then((response) => {
+    console.log(response)
+    const data = response.map(
+        (item) => ({
+            open: item.open,
+            high: item.high,
+            low: item.low,
+            close: item.close,
+            time: Date.parse(item.time) / 1000
+        })
+    )
+    candleSeries.setData(data);
+});
+
+// let earleastBar = {}
+// console.log(trades[0])
+// for (let i = 0; i < trades[0]; i++) {
+// let timestamp = new Date(trades[0][i].time).getTime() / 1000;
+//     earleastBar = {
+//         time: timestamp,
+//         open: trades[0][i].open,
+//         high: trades[0][i].high,
+//         low: trades[0][i].low,
+//         close: trades[0][i].close,
+//     };
+//     candleSeries.update(earleastBar);
+// }
+
 let currentBar = {};
-let trades = [];
 
 const trade = document.getElementById("trade");
 ws.onmessage = function (event) {
     messages = JSON.parse(event.data);
     // console.log(messages);
-        if (messages.symbol == symbol) {
+        if (messages.symbol === symbol) {
             const tradeElement = document.createElement("div");
             tradeElement.className = "trade";
             tradeElement.innerHTML = `<b>${messages.symbol}</b> 

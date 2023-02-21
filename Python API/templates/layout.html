@@ -48,5 +48,8 @@
     {% block content %}
     {% endblock %}
 </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="module" src="{{ url_for('static', path='js/init_firebase.js') }}"></script>
+    <script type="module" src="{{ url_for('static', path='js/logout.js') }}"></script>
 </body>
 </html>
