@@ -1,6 +1,6 @@
 import asyncio
-import json
 import logging
+import time
 
 import psycopg2
 from fastapi import FastAPI, Request, HTTPException
@@ -150,38 +150,45 @@ def login(request: Request):
 
 
 @app.get("/signup")
-def login(request: Request):
+def signup(request: Request):
     return tempaltes.TemplateResponse("signup.html", {"request": request})
 
 @app.get("/faq")
-def login(request: Request):
+def faq(request: Request):
     return tempaltes.TemplateResponse("faq.html", {"request": request})
 
 
+
+username_leaderboard = ""
 @app.get("/leaderboard")
-def login(request: Request):
-    tabel = "investors_net_balance"
+def leaderboard(request: Request):
+    return tempaltes.TemplateResponse("leaderboard.html",
+                                      {"request": request})
+
+@app.get("/leaderboard-data")
+def leaderboard_data(request: Request):
     schema = "public"
-    name = "fawzilinggo"
+    tabel = "investors_net_balance"
+    username = request.headers.get("data")
+    print("username: ", username)
     cur = conn.cursor()
-    query = """SELECT username, balance FROM {}.{} WHERE username = '{}'""".format(schema, tabel, name)
+    query = """
+    SELECT username, balance FROM {}.{} WHERE username = '{}'
+    """.format(schema, tabel, username)
     cur.execute(query)
     row = cur.fetchone()
-    print(row)
+    if row is None:
+        print("row is none")
+        print("username: ", username)
+        name = username
+        balance = 0
+        cur.close()
+        return {"name": name, "balance": balance}
     balance = row[1]
     name = row[0]
     cur.close()
-    return tempaltes.TemplateResponse("leaderboard.html",
-                                      {"request": request,
-                                       "balance": balance,
-                                       "name": name})
-@app.post("/send-leaderboard")
-async def send_leaderboard(request: Request):
-    schema = "public"
-    table = "trading_order_realtime"
-    request_body = await request.json()
-    print(request_body)
-
+    print("balance: ", balance)
+    return {"name": name, "balance": balance}
 
 class TradingOrderRealtome(BaseModel):
     symbol: str

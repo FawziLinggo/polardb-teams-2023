@@ -76,19 +76,6 @@ fetch(local+'/trading-order-realtime', {
     candleSeries.setData(data);
 });
 
-// let earleastBar = {}
-// console.log(trades[0])
-// for (let i = 0; i < trades[0]; i++) {
-// let timestamp = new Date(trades[0][i].time).getTime() / 1000;
-//     earleastBar = {
-//         time: timestamp,
-//         open: trades[0][i].open,
-//         high: trades[0][i].high,
-//         low: trades[0][i].low,
-//         close: trades[0][i].close,
-//     };
-//     candleSeries.update(earleastBar);
-// }
 
 let currentBar = {};
 
