@@ -159,6 +159,10 @@ def login(request: Request):
 def login(request: Request):
     return tempaltes.TemplateResponse("faq.html", {"request": request})
 
+@app.get("/aboutus")
+def login(request: Request):
+    return tempaltes.TemplateResponse("about.html", {"request": request})
+
 
 @app.get("/leaderboard")
 def login(request: Request):
