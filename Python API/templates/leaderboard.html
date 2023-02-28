@@ -1,8 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
+<head>
+        <script type="module" src="{{ url_for('static', path='js/init_firebase.js') }}"></script>
+</head>
 
 <title>Lederboard</title>
+<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 
 <h1 class="ui red header">Leaderboard</h1>
-<h2 class="ui blue header"> Hello {{ name }} your balance is {{ balance }}</h2>
+
+
+<div class="ui blue header" id="leaderboard-container"></div>
+
+<div id="grid-leaderboard-container">
+<div class=container id="chart">
+</div>
+</div>
+
+
+<script type="module" src="{{ url_for('static', path='js/leaderboard.js') }}"></script>
+<script type="module" src="{{ url_for('static', path='js/grid-leaderboard.js') }}"></script>
 {% endblock %}
+

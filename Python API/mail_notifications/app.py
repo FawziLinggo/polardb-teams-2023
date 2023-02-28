@@ -1,19 +1,21 @@
 import json
 import os
+import socket
 import sys
 from datetime import datetime, timedelta
 
 import psycopg2 as psycopg2
-import requests as requests
 from flask import Flask, request
 from flask_mail import Mail, Message
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 
 # Logging
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # basic auth flask app
 auth = HTTPBasicAuth()
@@ -103,7 +105,7 @@ def insert_token_subscriber(name, username_token, token, expire30days, topic, sy
     except Exception as e:
         logging.error("failed insert token kafka subscriber to database with name {} symbol {}".format(name, symbol))
         return str(e)
-@app.route("/send-email-order", methods=['GET'])
+@app.route("/send-email-order", methods=['POST'])
 @auth.login_required
 def send_email():
     try:
@@ -133,7 +135,7 @@ def send_email():
         logging.error(str(e))
         return json.dumps({"error": str(e), "status": "error"})
 
-@app.route("/send-email-subscriber", methods=['GET'])
+@app.route("/send-email-subscriber", methods=['POST'])
 @auth.login_required
 def send_email_subscriber():
     try:
@@ -154,7 +156,8 @@ def send_email_subscriber():
 
         try:
             HTMLFile = open("templates/notif-subcriber.html", "r")
-            HTMLFile = HTMLFile.read().format(name=name, stock=stock, topic_name=topic, username=username_token, token=token, expire30days=expire30days)
+            HTMLFile = HTMLFile.read().format(name=name, stock=stock, topic_name=topic, username=username_token,
+                                              token=token, expire30days=expire30days)
             msg = Message(Title, sender=email_sender, recipients=[email_receiver])
             msg.html = HTMLFile
             mail.send(msg)
@@ -229,19 +232,9 @@ def investors_net_balance():
         return json.dumps({"error": str(e), "status": "error"})
 
 
-def get_ippublic():
-    endpoint = 'https://ipinfo.io/json'
-    response = requests.get(endpoint, verify = True)
-
-    if response.status_code != 200:
-        return 'Status:', response.status_code, 'Problem with the request. Exiting.'
-        exit()
-
-    data = response.json()
-
-    return data['ip']
-
 if __name__ == '__main__':
-    IPAddr = get_ippublic()
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print(IPAddr)
     logging.info("Starting Email Service at port 5000")
     app.run(port=80, host=IPAddr)

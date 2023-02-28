@@ -3,7 +3,7 @@ import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/fire
 const auth = getAuth();
 function logout() {
     signOut(auth).then(() => {
-        window.location.href = "/login";
+        window.location.href = "/login?#";
     }).catch((error) => {
         console.log(error);
     });

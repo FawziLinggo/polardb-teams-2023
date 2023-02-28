@@ -1,11 +1,12 @@
 import asyncio
 import logging
+import time
 
 import psycopg2
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from jproperties import Properties
-from pydantic import BaseModel, StrictStr
+from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -141,9 +142,6 @@ async def register(item: Users):
         return {"error": str(e), "status code": 400}
 
 
-@app.get("/subscribe/{symbol}")
-def subscribe(request: Request, symbol):
-    return tempaltes.TemplateResponse("subscribe_stock.html", {"request": request, "symbol": symbol})
 
 
 @app.get("/login")
@@ -152,28 +150,84 @@ def login(request: Request):
 
 
 @app.get("/signup")
-def login(request: Request):
+def signup(request: Request):
     return tempaltes.TemplateResponse("signup.html", {"request": request})
 
 @app.get("/faq")
-def login(request: Request):
+def faq(request: Request):
     return tempaltes.TemplateResponse("faq.html", {"request": request})
 
 
+
+username_leaderboard = ""
 @app.get("/leaderboard")
-def login(request: Request):
-    tabel = "investors_net_balance"
+def leaderboard(request: Request):
+    return tempaltes.TemplateResponse("leaderboard.html",
+                                      {"request": request})
+
+@app.get("/leaderboard-data")
+def leaderboard_data(request: Request):
     schema = "public"
-    name = "fawzilinggo"
+    tabel = "investors_net_balance"
+    username = request.headers.get("data")
+    print("username: ", username)
     cur = conn.cursor()
-    query = """SELECT username, balance FROM {}.{} WHERE username = '{}'""".format(schema, tabel, name)
+    query = """
+    SELECT username, balance FROM {}.{} WHERE username = '{}'
+    """.format(schema, tabel, username)
     cur.execute(query)
     row = cur.fetchone()
-    print(row)
+    if row is None:
+        print("row is none")
+        print("username: ", username)
+        name = username
+        balance = 0
+        cur.close()
+        return {"name": name, "balance": balance}
     balance = row[1]
     name = row[0]
     cur.close()
-    return tempaltes.TemplateResponse("leaderboard.html",
-                                      {"request": request,
-                                       "balance": balance,
-                                       "name": name})
+    print("balance: ", balance)
+    return {"name": name, "balance": balance}
+
+class TradingOrderRealtome(BaseModel):
+    symbol: str
+    open: float
+    low: float
+    high: float
+    close: float
+    time: str
+@app.post("/trading-order-realtime")
+async def stock_realtime(request: Request):
+    schema = "public"
+    table = "trading_order_realtime"
+    request_body = await request.json()
+    symbol = request_body['symbol']
+    query = """
+    SELECT symbol, "open", low, high, "close", "time" FROM {}.{} WHERE symbol = '{}'
+    """.format(schema, table, symbol)
+
+    cur = conn.cursor()
+    cur.execute(query)
+    datas = cur.fetchall()
+    messages =[]
+    for data in datas:
+        symbol = data[0]
+        open = data[1]
+        low = data[2]
+        high = data[3]
+        close = data[4]
+        time = data[5]
+        json_data = {
+            "symbol": symbol,
+            "open": open,
+            "low": low,
+            "high": high,
+            "close": close,
+            "time": time
+        }
+        messages.append(json_data)
+
+    cur.close()
+    return messages
+

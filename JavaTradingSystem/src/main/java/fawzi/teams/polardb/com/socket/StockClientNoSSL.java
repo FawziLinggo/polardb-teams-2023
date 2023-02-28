@@ -21,10 +21,8 @@ public class StockClientNoSSL {
 
     final static Logger logger = Logger.getLogger(StockClientNoSSL.class.getName());
     public static void main(String[] args) throws IOException{
-//        ParameterTool params = ParameterTool.fromArgs(args);
-//        Properties props = new NindaProperties(params.getRequired("config.socket.path")).build();
 
-        Properties props = new CheckProperties("/home/adi/fawzi_linggo/pythonProject/pythonProject/polardb-teams-2023/All-Config/config-socket-server.properties").build();
+        Properties props = new CheckProperties("./config-socket-server.properties").build();
 
         // Initialize target topics
         String topics = (String) props.get("topic.name");
@@ -42,16 +40,25 @@ public class StockClientNoSSL {
             BufferedReader bf = new BufferedReader(in);
 
             // produce to topic kafka
+            int i = 0;
             while (true){
+
                 String str = bf.readLine();
-//                System.out.println(str);
-                // producer to kafka topic
-                producer.send(new ProducerRecord<>(topics, str));
-                producer.flush();
-                logger.info("Send to Kafka : " + str);
+                String symbol = str.split(",")[0].substring(11,15);
+                producer.send(new ProducerRecord<>(topics,symbol, str), (metadata, exception) -> {
+                    if (exception != null) {
+                        exception.printStackTrace();
+                    }
+                });
+
+                // flush every 29 messages
+                if (i == 28) {
+                    producer.flush();
+                    i = 0;
+                }
+                i++;
+
             }
-
-
 
 
         } catch (IOException e) {

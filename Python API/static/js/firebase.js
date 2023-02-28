@@ -19,6 +19,7 @@ function signup() {
     .then((userCredential) => {
         const user = userCredential.user;
         var root_url = window.location.origin;
+        console.log("root url : "+root_url)
         fetch(root_url + '/register', {
             method: 'POST',
             body: JSON.stringify({

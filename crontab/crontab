@@ -1,0 +1,2 @@
+*/10 * * * * /root/script-docker-java-trading.sh
+0 0 * * * /usr/bin/python3 /root/python-delete-tables-postgres.py
