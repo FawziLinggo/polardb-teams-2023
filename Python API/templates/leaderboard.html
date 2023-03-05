@@ -4,21 +4,18 @@
         <script type="module" src="{{ url_for('static', path='js/init_firebase.js') }}"></script>
 </head>
 
-<title>Lederboard</title>
+<title>SW Lederboard</title>
 <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 
-<h1 class="ui red header">Leaderboard</h1>
 
-
-<div class="ui blue header" id="leaderboard-container"></div>
-
-<div id="grid-leaderboard-container">
-<div class= "container" id="chart">
+<div class="container-fluid px-4">  
+        <h1 class="ui red header">Leaderboard</h1>
+        <div id="grid-leaderboard-container">
+        <div class=container id="chart">
+        </div>
+        </div>
+        <script type="module" src="{{ url_for('static', path='js/leaderboard.js') }}"></script>
+        <script type="module" src="{{ url_for('static', path='js/grid-leaderboard.js') }}"></script>
 </div>
-</div>
-
-
-<script type="module" src="{{ url_for('static', path='js/leaderboard.js') }}"></script>
-<script type="module" src="{{ url_for('static', path='js/grid-leaderboard.js') }}"></script>
 {% endblock %}
 
