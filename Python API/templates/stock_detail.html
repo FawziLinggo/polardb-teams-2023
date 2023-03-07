@@ -37,7 +37,7 @@
 <script type="module" src="{{ url_for('static', path='js/trade_action.js') }}"></script>
 
 <div class="container">
-<h2><a href="/">Stocks</a> <i class="angle double right icon"> </i> {{ stock.company }} ({{ stock.symbol }})</h2>
+<h2><a href="/">Stocks</a> <i class="fa fa-angle-double-right" aria-hidden="true"></i> {{ stock.company }} ({{ stock.symbol }})</h2>
 <!-- TradingView Widget BEGIN -->
 <h2>Chart by Trading View</h2>
 <div class="tradingview-widget-container">
@@ -81,15 +81,15 @@
 </div>
 <button class="btn btn-success" id="btnBuy" type="button">Buy</button>
 <button class="btn btn-danger" id="btnSell">Sell</button>
-<div class="ui button red" tabindex="0" id="btnSubs">
+<div class="btn btn-danger" tabindex="0" id="btnSubs">
   <div class="visible content">Subscribe realtime Data</div>
-  <div class="hidden content"><p>80.99 a month</p></div>
+  <div class="hidden content"><p class="my-0"><b>80.99 </b>a month</p></div>
 </div>
 <h1 id="tradeStatusHeading">Buy</h1>
 
-  <div class="d-flex align-items-center gap-2">
-    <label class="mr-3 my-0 ">amount</label>
-    <input type="text" placeholder="amount" id="amount" class="rounded-md">
+  <div class="d-flex align-items-center mb-3 gap-2">
+    <label class="mr-3 my-0 ">Amount</label>
+    <input type="text" placeholder="Input amount..." id="amount" class="rounded-md">
     <button class="btn btn-outline-primary ml-3" type="submit" id="submit">Trade Now</button>
   </div>
 
