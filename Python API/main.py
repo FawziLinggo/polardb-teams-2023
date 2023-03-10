@@ -157,6 +157,10 @@ def signup(request: Request):
 def faq(request: Request):
     return tempaltes.TemplateResponse("faq.html", {"request": request})
 
+@app.get("/aboutus")
+def login(request: Request):
+    return tempaltes.TemplateResponse("about.html", {"request": request})
+
 
 
 username_leaderboard = ""

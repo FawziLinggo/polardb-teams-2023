@@ -1,0 +1,39 @@
+{
+  "type" : "record",
+  "name" : "TradingAvro",
+  "namespace" : "fawzi.teams.polardb.com.model",
+  "fields" : [ {
+    "name" : "close",
+    "type" : {
+      "type" : "float",
+      "java-class" : "java.lang.Float"
+    }
+  }, {
+    "name" : "high",
+    "type" : {
+      "type" : "float",
+      "java-class" : "java.lang.Float"
+    }
+  }, {
+    "name" : "low",
+    "type" : {
+      "type" : "float",
+      "java-class" : "java.lang.Float"
+    }
+  }, {
+    "name" : "open",
+    "type" : {
+      "type" : "float",
+      "java-class" : "java.lang.Float"
+    }
+    }, {
+    "name" : "symbol",
+    "type" : [ "null", "string" ]
+  }, {
+    "name" : "timestamp",
+    "type" : {
+      "type" : "long",
+      "java-class" : "java.lang.Long"
+    }
+  } ]
+}

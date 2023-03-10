@@ -1,0 +1,52 @@
+.main-icon {
+  font-size: 3rem;
+}
+
+footer {
+  background-color: #f2f2f2;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.footer-logo img {
+  height: 50px;
+}
+
+.footer-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.footer-nav li {
+  margin-right: 20px;
+}
+
+.footer-nav a {
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer-nav a:hover {
+  color: #999;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.brand {
+  font-size: 20px;
+  width: 200px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
